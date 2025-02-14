@@ -1,0 +1,53 @@
+
+local Lighting = game:GetService("Lighting")
+local UserInputService = game:GetService("UserInputService")
+local effectsEnabled = false
+
+local function EnableEffects()
+    if effectsEnabled then return end
+    effectsEnabled = true
+
+    local bloom = Instance.new("BloomEffect")
+    bloom.Intensity = 1.5
+    bloom.Size = 24
+    bloom.Threshold = 0.8
+    bloom.Name = "BloomEffect"
+    bloom.Parent = Lighting
+
+    local colorCorrection = Instance.new("ColorCorrectionEffect")
+    colorCorrection.Brightness = 0.1
+    colorCorrection.Contrast = 0.3
+    colorCorrection.Saturation = 0.2
+    colorCorrection.TintColor = Color3.fromRGB(255, 240, 220)
+    colorCorrection.Name = "ColorCorrectionEffect"
+    colorCorrection.Parent = Lighting
+
+    local depthOfField = Instance.new("DepthOfFieldEffect")
+    depthOfField.FocusDistance = 20
+    depthOfField.InFocusRadius = 50
+    depthOfField.NearIntensity = 0.5
+    depthOfField.FarIntensity = 0.5
+    depthOfField.Name = "DepthOfFieldEffect"
+    depthOfField.Parent = Lighting
+end
+
+local function DisableEffects()
+    effectsEnabled = false
+    for _, effect in pairs(Lighting:GetChildren()) do
+        if effect:IsA("PostEffect") then
+            effect:Destroy()
+        end
+    end
+end
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.Minus then
+        if effectsEnabled then
+            DisableEffects()
+        else
+            EnableEffects()
+        end
+    end
+end)
+
+EnableEffects()
